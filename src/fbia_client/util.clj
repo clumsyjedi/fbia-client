@@ -6,6 +6,12 @@
            org.apache.http.client.utils.URLEncodedUtils
            org.apache.http.message.BasicNameValuePair))
 
+(defn ncpus  []
+  (.availableProcessors  (Runtime/getRuntime)))
+
+(defn parallelism  []
+  (+  (ncpus) 1))
+
 (defn aform 
   "async fn (see pipeline-async) that catches exceptions and passes through throwables"
   [f]
