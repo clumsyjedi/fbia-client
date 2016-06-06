@@ -82,6 +82,16 @@
                         (close! res)))))
     res))
 
+(defn delete-request
+  "Makes DELETE HTTP request, Returns a channel with one message, either an error (Throwable) or body"
+  [url]
+  (let [res (chan 1)]
+    (go (http/delete url
+                     (fn [http-response]
+                       (go (>! res http-response)
+                           (close! res)))))
+    res))
+
 (defn post-request
   "Makes POST HTTP request, Returns a channel with one message, either an error (Throwable) or body"
   [url]

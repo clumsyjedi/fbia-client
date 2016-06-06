@@ -2,39 +2,42 @@
   (:require [clojure.core.async :refer [chan pipeline]]
             [fbia-client.util
              :refer
-             [get-request graph-url post-request xf-http-response xf-json-decode]]))
+             [delete-request
+              get-request
+              graph-url
+              post-request
+              xf-http-response
+              xf-json-decode]]))
 
 (defn list-articles
   "Retrieve a list of instant articles for a page"
-  [page-id {:keys [access-token] :as params}]
+  [page-id {:keys [access_token] :as params}]
   (let [res (chan 1)]
     (pipeline 1 res 
               (comp xf-http-response xf-json-decode)
               (get-request (graph-url "2.6" 
                                       (str "/" page-id "/instant_articles") 
-                                      (assoc params :access_token access-token))))
+                                      params)))
     res))
 
 (defn lookup-article
   "Retrieve a specific instant article by canonical URL"
-  [canonical-url {:keys [access-token] :as params}]
+  [{:keys [access_token fields id] :as params}]
   (let [res (chan 1)]
     (pipeline 1 res 
               (comp xf-http-response xf-json-decode)
               (get-request (graph-url 2.6 "" 
-                                      (assoc params :access_token access-token
-                                             :id canonical-url
-                                             :fields "instant_article"))))
+                                       params)))
     res))
 
 (defn get-article
   "Retrieve a specific instant article by instant article id"
-  [id  {:keys [access-token] :as params}]
+  [id  {:keys [access_token] :as params}]
   (let [res (chan 1)]
     (pipeline 1 res 
               (comp xf-http-response xf-json-decode)
               (get-request (graph-url 2.6 (str "/" id)
-                                      (assoc params :access_token access-token))))
+                                      params)))
     res))
 
 (defn create-article [page-id {:keys [html_source access_token] :as params}]
@@ -49,5 +52,12 @@
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
               (get-request (graph-url 2.6 (str "/" import-status-id) params)))
+    res))
+
+(defn delete-article [article-id {:keys [access_token] :as params}]
+  (let [res (chan 1)] 
+    (pipeline 1 res
+              (comp xf-http-response xf-json-decode)
+              (delete-request (graph-url 2.6 (str "/" article-id) params)))
     res))
 
