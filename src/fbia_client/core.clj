@@ -1,5 +1,6 @@
 (ns fbia-client.core
   (:require [clojure.core.async :refer [chan pipeline]]
+            [cheshire.core :as json]
             [fbia-client.util
              :refer
              [delete-request
@@ -59,5 +60,39 @@
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
               (delete-request (graph-url 2.6 (str "/" article-id) params)))
+    res))
+
+(defn- get-multi-req [fields id]
+  {:method "GET"
+   :relative_url (str "?id=" id "&fields=" fields)})
+
+(defn- del-multi-req [fields id]
+  {:method "DELETE"
+   :relative_url (str "/" id)})
+
+(defn lookup-article-multi
+  "Retrieve a specific instant article by canonical URL"
+  [{:keys [access_token fields ids] :as params}]
+  (let [res (chan 1)
+        batch (json/generate-string (map (partial get-multi-req fields) ids))]
+    (pipeline 1 res 
+              (comp xf-http-response xf-json-decode)
+              (post-request 
+                (graph-url 2.6 "" (-> params
+                                      (assoc :batch batch)
+                                      (dissoc :ids)))))
+    res))
+
+(defn delete-article-multi
+  "Retrieve a specific instant article by canonical URL"
+  [{:keys [access_token fields ids] :as params}]
+  (let [res (chan 1)
+        batch (json/generate-string (map (partial del-multi-req fields) ids))]
+    (pipeline 1 res 
+              (comp xf-http-response xf-json-decode)
+              (post-request 
+                (graph-url 2.6 "" (-> params
+                                      (assoc :batch batch)
+                                      (dissoc :ids)))))
     res))
 
