@@ -45,7 +45,7 @@
   (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (post-request (graph-url 2.6 (str "/" page-id "/instant_articles") params)))
+              (post-request (graph-url 2.6 (str "/" page-id "/instant_articles") {}) params))
     res))
 
 (defn import-status [import-status-id {:keys [access_token] :as params}]
@@ -77,10 +77,9 @@
         batch (json/generate-string (map (partial get-multi-req fields) ids))]
     (pipeline 1 res 
               (comp xf-http-response xf-json-decode)
-              (post-request 
-                (graph-url 2.6 "" (-> params
-                                      (assoc :batch batch)
-                                      (dissoc :ids)))))
+              (post-request (graph-url 2.6 "" {}) (-> params
+                                                      (assoc :batch batch)
+                                                      (dissoc :ids))))
     res))
 
 (defn delete-article-multi
@@ -91,8 +90,8 @@
     (pipeline 1 res 
               (comp xf-http-response xf-json-decode)
               (post-request 
-                (graph-url 2.6 "" (-> params
-                                      (assoc :batch batch)
-                                      (dissoc :ids)))))
+                (graph-url 2.6 "" {}) (-> params
+                                          (assoc :batch batch)
+                                          (dissoc :ids))))
     res))
 

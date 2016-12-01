@@ -94,10 +94,10 @@
 
 (defn post-request
   "Makes POST HTTP request, Returns a channel with one message, either an error (Throwable) or body"
-  [url]
+  [url & [params]]
   (let [res (chan 1)]
-    (go (http/post url (fn [http-response]
-                         (go (>! res http-response)
-                             (close! res)))))
+    (go (http/post url {:form-params params} (fn [http-response]
+                                               (go (>! res http-response)
+                                                   (close! res)))))
     res))
 
