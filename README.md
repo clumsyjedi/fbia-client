@@ -22,7 +22,7 @@ I will probably never again update this README, so you should poke around on clo
 
 ## Long lived page tokens
 
-I personally struggled generating the long-lived page token for FBIA publishing. If you also struggle with this, you can call [page-token-from-user-token](file:///Users/clumsyjedi/workspace/fbia-client/doc/fbia-client.auth.html#var-page-token-from-user-token) from a repl, assuming you have the requisite app IDs etc.
+I personally struggled generating the long-lived page token for FBIA publishing. If you also struggle with this, you can call [page-token-from-user-token](https://github.com/clumsyjedi/fbia-client/blob/master/src/fbia_client/auth.clj#L35) from a repl, assuming you have the requisite app IDs etc.
 
 ## License
 
