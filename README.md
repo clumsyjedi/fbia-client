@@ -2,7 +2,7 @@
 
 It's an FBIA client in clojure
 
-# Obtention
+## Obtention
 
 ```
 :dependencies [[fbia-client "0.4.5"]]
