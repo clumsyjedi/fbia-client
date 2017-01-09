@@ -54,9 +54,7 @@
 (def ^{:doc "Transducer to handle http responses"} 
   xf-http-response (xform-map (fn [{:keys [body status error] :as msg}]
                                 (if (or error (< status 200) (> status 299)) 
-                                  (ex-info "HTTP Failed" {:error error
-                                                          :status status
-                                                          :body body})
+                                  (ex-info "HTTP Failed" {:status status :body body} error)
                                   body))))
 
 
@@ -101,3 +99,13 @@
                                                    (close! res)))))
     res))
 
+(defn error-message 
+  "the errors are nested so far down in the responses, so so far down"
+  [^Throwable e]
+  (or (when (instance? clojure.lang.ExceptionInfo e)
+        (when (-> e ex-data :body)
+          (try (when-let [body (json/read-str (-> e ex-data :body) :key-fn keyword)]
+                 (-> body :error :message))
+               (catch Throwable e
+                 nil))))
+      (.getMessage e)))
