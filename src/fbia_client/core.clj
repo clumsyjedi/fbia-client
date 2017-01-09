@@ -86,7 +86,7 @@
   "Retrieve a specific instant article by canonical URL"
   [{:keys [access_token fields ids] :as params}]
   (let [res (chan 1)
-        batch (json/generate-string (map (partial del-multi-req fields) ids))]
+        batch (json/write-str (map (partial del-multi-req fields) ids))]
     (pipeline 1 res 
               (comp xf-http-response xf-json-decode)
               (post-request 
