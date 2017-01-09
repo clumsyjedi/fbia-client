@@ -1,6 +1,6 @@
 (ns fbia-client.core
   (:require [clojure.core.async :refer [chan pipeline]]
-            [cheshire.core :as json]
+            [clojure.data.json :as json]
             [fbia-client.util
              :refer
              [delete-request
@@ -74,7 +74,7 @@
   "Retrieve a specific instant article by canonical URL"
   [{:keys [access_token fields ids] :as params}]
   (let [res (chan 1)
-        batch (json/generate-string (map (partial get-multi-req fields) ids))]
+        batch (json/write-str (map (partial get-multi-req fields) ids))]
     (pipeline 1 res 
               (comp xf-http-response xf-json-decode)
               (post-request (graph-url 2.6 "" {}) (-> params

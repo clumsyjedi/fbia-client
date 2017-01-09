@@ -7,4 +7,5 @@
                  [http-kit "2.1.18"]
                  [org.clojure/core.async "0.2.374"]
                  [org.clojure/data.json "0.2.6"]
-                 [org.apache.httpcomponents/httpclient "4.5.2"]])
+                 [org.apache.httpcomponents/httpclient "4.5.2"]]
+  :plugins [[lein-codox "0.10.2"]])
