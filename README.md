@@ -10,7 +10,7 @@ It's an FBIA client in clojure
 
 ## Usage
 
-This client wraps up a lot of the boilerplate stuff for FBIA into a natice clojure library. It is not very exciting, but should be a decent enough starting point for devlopers who are working in this space.
+This client wraps up a lot of the boilerplate stuff for FBIA into a native clojure library. It is not very exciting, but should be a decent enough starting point for devlopers who are working in this space.
 
 Most functions return core.async channels containing one item. If the result is `Throwable` then an error has occurred in the belly of the internet. Otherwise it should contain some data from Facebook about the thig you did.
 
