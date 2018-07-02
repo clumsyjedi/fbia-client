@@ -14,10 +14,10 @@
   "Retrieve a list of instant articles for a page"
   [page-id {:keys [access_token] :as params}]
   (let [res (chan 1)]
-    (pipeline 1 res 
+    (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (get-request (graph-url "2.6" 
-                                      (str "/" page-id "/instant_articles") 
+              (get-request (graph-url "3.0"
+                                      (str "/" page-id "/instant_articles")
                                       params)))
     res))
 
@@ -25,9 +25,9 @@
   "Retrieve a specific instant article by canonical URL"
   [{:keys [access_token fields id] :as params}]
   (let [res (chan 1)]
-    (pipeline 1 res 
+    (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (get-request (graph-url 2.6 "" 
+              (get-request (graph-url 3.0 ""
                                        params)))
     res))
 
@@ -35,9 +35,9 @@
   "Retrieve a specific instant article by instant article id"
   [id  {:keys [access_token] :as params}]
   (let [res (chan 1)]
-    (pipeline 1 res 
+    (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (get-request (graph-url 2.6 (str "/" id)
+              (get-request (graph-url 3.0 (str "/" id)
                                       params)))
     res))
 
@@ -45,21 +45,21 @@
   (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (post-request (graph-url 2.6 (str "/" page-id "/instant_articles") {}) params))
+              (post-request (graph-url 3.0 (str "/" page-id "/instant_articles") {}) params))
     res))
 
 (defn import-status [import-status-id {:keys [access_token] :as params}]
-  (let [res (chan 1)] 
+  (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (get-request (graph-url 2.6 (str "/" import-status-id) params)))
+              (get-request (graph-url 3.0 (str "/" import-status-id) params)))
     res))
 
 (defn delete-article [article-id {:keys [access_token] :as params}]
-  (let [res (chan 1)] 
+  (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (delete-request (graph-url 2.6 (str "/" article-id) params)))
+              (delete-request (graph-url 3.0 (str "/" article-id) params)))
     res))
 
 (defn- get-multi-req [fields id]
@@ -75,9 +75,9 @@
   [{:keys [access_token fields ids] :as params}]
   (let [res (chan 1)
         batch (json/write-str (map (partial get-multi-req fields) ids))]
-    (pipeline 1 res 
+    (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (post-request (graph-url 2.6 "" {}) (-> params
+              (post-request (graph-url 3.0 "" {}) (-> params
                                                       (assoc :batch batch)
                                                       (dissoc :ids))))
     res))
@@ -87,10 +87,10 @@
   [{:keys [access_token fields ids] :as params}]
   (let [res (chan 1)
         batch (json/write-str (map (partial del-multi-req fields) ids))]
-    (pipeline 1 res 
+    (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (post-request 
-                (graph-url 2.6 "" {}) (-> params
+              (post-request
+                (graph-url 3.0 "" {}) (-> params
                                           (assoc :batch batch)
                                           (dissoc :ids))))
     res))
