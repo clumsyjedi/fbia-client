@@ -1,4 +1,4 @@
-(defproject fbia-client "0.4.6"
+(defproject fbia-client "0.4.7-SNAPSHOT"
   :description "Facebook instant articles client in clojure"
   :url "https://github.com/clumsyjedi/fbia-client"
   :license {:name "Eclipse Public License"
