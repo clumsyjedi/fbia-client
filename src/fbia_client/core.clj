@@ -16,7 +16,7 @@
   (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (get-request (graph-url "3.0"
+              (get-request (graph-url "7.0"
                                       (str "/" page-id "/instant_articles")
                                       params)))
     res))
@@ -27,7 +27,7 @@
   (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (get-request (graph-url 3.0 ""
+              (get-request (graph-url 7.0 ""
                                        params)))
     res))
 
@@ -37,7 +37,7 @@
   (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (get-request (graph-url 3.0 (str "/" id)
+              (get-request (graph-url 7.0 (str "/" id)
                                       params)))
     res))
 
@@ -45,21 +45,21 @@
   (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (post-request (graph-url 3.0 (str "/" page-id "/instant_articles") {}) params))
+              (post-request (graph-url 7.0 (str "/" page-id "/instant_articles") {}) params))
     res))
 
 (defn import-status [import-status-id {:keys [access_token] :as params}]
   (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (get-request (graph-url 3.0 (str "/" import-status-id) params)))
+              (get-request (graph-url 7.0 (str "/" import-status-id) params)))
     res))
 
 (defn delete-article [article-id {:keys [access_token] :as params}]
   (let [res (chan 1)]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (delete-request (graph-url 3.0 (str "/" article-id) params)))
+              (delete-request (graph-url 7.0 (str "/" article-id) params)))
     res))
 
 (defn- get-multi-req [fields id]
@@ -77,7 +77,7 @@
         batch (json/write-str (map (partial get-multi-req fields) ids))]
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
-              (post-request (graph-url 3.0 "" {}) (-> params
+              (post-request (graph-url 7.0 "" {}) (-> params
                                                       (assoc :batch batch)
                                                       (dissoc :ids))))
     res))
@@ -90,7 +90,7 @@
     (pipeline 1 res
               (comp xf-http-response xf-json-decode)
               (post-request
-                (graph-url 3.0 "" {}) (-> params
+                (graph-url 7.0 "" {}) (-> params
                                           (assoc :batch batch)
                                           (dissoc :ids))))
     res))
