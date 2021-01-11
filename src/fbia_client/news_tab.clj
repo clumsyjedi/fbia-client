@@ -19,12 +19,12 @@
              (post-request (graph-url api-version ""
                                       (merge {:scopes scopes
                                               :id url
-                                              :access_token access-token
-                                              :denylist (str deny?)}
+                                              :access_token access-token}
+                                             (when deny? {:denylist "true"})
                                              (when update? {:scrape "true"}))))))
 
 (defn unindex-article [url scopes access-token]
-  (index-article url scopes access-token {:deny? true}))
+  (index-article url scopes access-token :deny? true))
 
 (defn lookup-article [url access-token]
   (transduce parse-response reducer []
