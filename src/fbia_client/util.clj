@@ -14,6 +14,13 @@
 (defn parallelism  []
   (+  (ncpus) 1))
 
+(defn ^{:dynamic true
+        :doc "A function called on the input args of any http
+             request fn (like get-request). Allows logging of raw
+             before they're passed to the low level HTTP libs"}
+  *pre-http-fn*
+  [params] nil)
+
 (defn aform
   "async fn (see pipeline-async) that catches exceptions and passes through throwables"
   [f]
@@ -54,7 +61,7 @@
                 (URLEncodedUtils/parse params (Charset/forName "UTF-8")))))
 
 (def ^{:doc "Transducer to handle http responses"}
-  xf-http-response (xform-map (fn [{:keys [body status error] :as msg}]
+  xf-http-response (xform-map (fn [{:keys [body status error]}]
                                 (if (or error (< status 200) (> status 299))
                                   (ex-info "HTTP Failed" {:status status :body body} error)
                                   body))))
@@ -66,6 +73,10 @@
 (def ^{:doc "transducer to handle HTTP query string decoding"}
   xf-http-decode (xform-map #(decode-params %)))
 
+(def ^{:dynamic true :doc "transducer that compbines http and json decoding
+                          BUT it's dynamic so it can be overloaded by the caller"}
+  *xf-standard* (comp xf-http-response xf-json-decode))
+
 (defn graph-url
   ([path params]
    (str "https://graph.facebook.com" path "?" (encode-params params)))
@@ -75,6 +86,7 @@
 (defn get-request
   "Makes GET HTTP request, Returns a channel with one message, either an error (Throwable) or body"
   [url]
+  (*pre-http-fn* {:url url})
   (let [res (chan 1)]
     (go (http/get url
                   (fn [http-response]
@@ -85,6 +97,7 @@
 (defn delete-request
   "Makes DELETE HTTP request, Returns a channel with one message, either an error (Throwable) or body"
   [url]
+  (*pre-http-fn* {:url url})
   (let [res (chan 1)]
     (go (http/delete url
                      (fn [http-response]
@@ -95,6 +108,7 @@
 (defn post-request
   "Makes POST HTTP request, Returns a channel with one message, either an error (Throwable) or body"
   [url & [params]]
+  (*pre-http-fn* {:url url :params params})
   (let [res (chan 1)]
     (go (http/post url {:form-params params} (fn [http-response]
                                                (go (>! res http-response)
