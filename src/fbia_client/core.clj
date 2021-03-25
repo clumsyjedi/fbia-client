@@ -95,3 +95,13 @@
                                           (dissoc :ids))))
     res))
 
+(defn verify-key
+  "Checks api keys. params is a map {:input_token \"X\" :access_token \"Y\"} where X might be the same as Y"
+  [params]
+  (let [res (chan 1)]
+    (pipeline 1 res
+              *xf-standard*
+              (get-request (graph-url api-version
+                                      "/debug_token"
+                                      params)))
+    res))
